@@ -1,6 +1,6 @@
 "use client";
 import { useState, FormEvent } from "react";
-import { Phone, Mail, Send, CheckCircle2, HelpCircle } from "lucide-react";
+import { Phone, Mail, Send, CheckCircle2, HelpCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import {
   FaInstagramSquare,
@@ -15,16 +15,41 @@ export default function ContactPipeline() {
     businessName: "",
     phone: "",
     email: "",
-    projectType: "web",
+    projectType: "",
     budget: "",
     message: "",
   });
+  
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSubmitPipeline = async (e: FormEvent) => {
     e.preventDefault();
-    // Connect to Supabase, Prisma, or a direct webhook engine here.
-    setIsSubmitted(true);
+    setIsSubmitting(true);
+    setErrorMessage(null);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formState),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to dispatch payload to server registry.");
+      }
+
+      await response.json();
+      setIsSubmitted(true);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setErrorMessage("Transmission failed. Please check your connection or contact us directly.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -37,7 +62,7 @@ export default function ContactPipeline() {
           <h1 className="text-4xl md:text-6xl font-bold font-display">
             Ready to Transform Your Business with Technology?
           </h1>
-          <p className="text-brand-muted max-w-xl mx-auto">
+          <p className="text-brand-muted max-w-xl mx-auto text-sm md:text-base">
             Every great project starts with a conversation. Share your ideas
             with us, and we will create a tailored digital solution that helps
             your business attract more customers, strengthen your online
@@ -47,7 +72,7 @@ export default function ContactPipeline() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 max-w-6xl mx-auto items-start">
           {/* Direct Dynamic Execution Controls */}
-          <div className="lg:col-span-7 glass-panel rounded-2xl p-8 border-white/10 relative">
+          <div className="lg:col-span-7 glass-panel rounded-2xl p-8 border border-white/10 relative">
             {isSubmitted ? (
               <div className="py-16 text-center space-y-4">
                 <div className="w-16 h-16 bg-brand-electric/10 text-brand-electric rounded-full flex items-center justify-center mx-auto">
@@ -71,11 +96,12 @@ export default function ContactPipeline() {
                     <input
                       type="text"
                       required
+                      disabled={isSubmitting}
                       value={formState.fullName}
                       onChange={(e) =>
                         setFormState({ ...formState, fullName: e.target.value })
                       }
-                      className="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-electric text-white transition-colors"
+                      className="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-electric text-white transition-colors disabled:opacity-50"
                       placeholder="e.g. John Doe"
                     />
                   </div>
@@ -85,6 +111,7 @@ export default function ContactPipeline() {
                     </label>
                     <input
                       type="text"
+                      disabled={isSubmitting}
                       value={formState.businessName}
                       onChange={(e) =>
                         setFormState({
@@ -92,7 +119,7 @@ export default function ContactPipeline() {
                           businessName: e.target.value,
                         })
                       }
-                      className="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-electric text-white transition-colors"
+                      className="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-electric text-white transition-colors disabled:opacity-50"
                       placeholder="e.g. Venture Link"
                     />
                   </div>
@@ -105,11 +132,12 @@ export default function ContactPipeline() {
                     <input
                       type="email"
                       required
+                      disabled={isSubmitting}
                       value={formState.email}
                       onChange={(e) =>
                         setFormState({ ...formState, email: e.target.value })
                       }
-                      className="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-electric text-white transition-colors"
+                      className="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-electric text-white transition-colors disabled:opacity-50"
                       placeholder="e.g john@gmail.com"
                     />
                   </div>
@@ -120,11 +148,12 @@ export default function ContactPipeline() {
                     <input
                       type="text"
                       required
+                      disabled={isSubmitting}
                       value={formState.phone}
                       onChange={(e) =>
                         setFormState({ ...formState, phone: e.target.value })
                       }
-                      className="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-electric text-white transition-colors"
+                      className="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-electric text-white transition-colors disabled:opacity-50"
                       placeholder="phone number"
                     />
                   </div>
@@ -135,6 +164,7 @@ export default function ContactPipeline() {
                     select a Service
                   </label>
                   <select
+                    disabled={isSubmitting}
                     value={formState.projectType}
                     onChange={(e) =>
                       setFormState({
@@ -142,15 +172,13 @@ export default function ContactPipeline() {
                         projectType: e.target.value,
                       })
                     }
-                    className="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-electric text-white transition-colors"
+                    className="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-electric text-white transition-colors disabled:opacity-50"
                   >
-                    {previewServices.map((p) => {
-                      return (
-                        <option key={p.id} value={p.id}>
-                          {p.title}
-                        </option>
-                      );
-                    })}
+                    {previewServices.map((p) => (
+                      <option key={p.id} value={p.title} className="bg-brand-dark text-white">
+                        {p.title}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -160,11 +188,12 @@ export default function ContactPipeline() {
                   </label>
                   <input
                     type="text"
+                    disabled={isSubmitting}
                     value={formState.budget}
                     onChange={(e) =>
                       setFormState({ ...formState, budget: e.target.value })
                     }
-                    className="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-electric text-white transition-colors"
+                    className="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-electric text-white transition-colors disabled:opacity-50"
                     placeholder="100,000"
                   />
                 </div>
@@ -176,20 +205,36 @@ export default function ContactPipeline() {
                   <textarea
                     rows={4}
                     required
+                    disabled={isSubmitting}
                     value={formState.message}
                     onChange={(e) =>
                       setFormState({ ...formState, message: e.target.value })
                     }
-                    className="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-electric text-white transition-colors resize-none"
+                    className="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-electric text-white transition-colors resize-none disabled:opacity-50"
                     placeholder="Tell us about your project, your business, and what you hope to achieve. Include any features, ideas, or challenges you'd like us to know about....."
                   />
                 </div>
 
+                {errorMessage && (
+                  <p className="text-xs font-semibold text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg p-3">
+                    {errorMessage}
+                  </p>
+                )}
+
                 <button
                   type="submit"
-                  className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-brand-electric to-brand-neon text-brand-bg font-bold py-4 rounded-xl shadow-lg hover:shadow-brand-electric/20 transition-all duration-300 cursor-pointer"
+                  disabled={isSubmitting}
+                  className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-brand-electric to-brand-neon text-brand-bg font-bold py-4 rounded-xl shadow-lg hover:shadow-brand-electric/20 transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Send Message <Send className="w-4 h-4" />
+                  {isSubmitting ? (
+                    <>
+                      Sending Transmission <Loader2 className="w-4 h-4 animate-spin" />
+                    </>
+                  ) : (
+                    <>
+                      Send Message <Send className="w-4 h-4" />
+                    </>
+                  )}
                 </button>
               </form>
             )}
@@ -197,10 +242,10 @@ export default function ContactPipeline() {
 
           {/* Verification Metrics & Fast Handshake Cards */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="glass-panel rounded-2xl p-6 border-white/10 space-y-6">
+            <div className="glass-panel rounded-2xl p-6 border border-white/10 space-y-6">
               <h4 className="text-lg font-bold font-display">GET IN TOUCH</h4>
 
-              <p className="text-brand-muted max-w-xl text-sm mx-auto">
+              <p className="text-brand-muted text-sm leading-relaxed">
                 Have a project in mind or need expert advice? We would love to
                 hear from you. Reach out through any of the channels below, and
                 our team will get back to you as soon as possible.
@@ -209,46 +254,28 @@ export default function ContactPipeline() {
               <div className="space-y-4">
                 <Link
                   href="mailto:ellorumwebsolutions@gmail.com"
-                  className="flex items-center gap-4 group p-3 rounded-xl bg-white/2 hover:bg-white/5 transition-colors"
+                  className="flex items-center gap-4 group p-3 rounded-xl bg-white/2 hover:bg-white/5 transition-colors border border-transparent hover:border-white/5"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-brand-electric/10 text-brand-electric flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-lg bg-brand-electric/10 text-brand-electric flex items-center justify-center shrink-0">
                     <Mail className="w-5 h-5" />
                   </div>
                   <div>
                     <p className="text-[10px] text-brand-muted uppercase font-mono">
                       Gmail Communications Hub
                     </p>
-                    <p className="text-sm font-semibold group-hover:text-brand-electric transition-colors">
+                    <p className="text-sm font-semibold group-hover:text-brand-electric transition-colors break-all">
                       ellorumwebsolutions@gmail.com
                     </p>
                   </div>
                 </Link>
-                {/* <Link href="https://instagram.com/@ellorumwebsolutions" className="flex items-center gap-4 group p-3 rounded-xl bg-white/2 hover:bg-white/5 transition-colors">
-                  <div className="w-10 h-10 rounded-lg bg-brand-electric/10 text-brand-electric flex items-center justify-center">
-                    <FaInstagramSquare className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-brand-muted uppercase font-mono">Communications Hub</p>
-                    <p className="text-sm font-semibold group-hover:text-brand-electric transition-colors">@ellorumwebsolutions</p>
-                  </div>
-                </Link>
-                <Link href="https://facebook.com/ellorumwebsolutions" className="flex items-center gap-4 group p-3 rounded-xl bg-white/2 hover:bg-white/5 transition-colors">
-                  <div className="w-10 h-10 rounded-lg bg-brand-electric/10 text-brand-electric flex items-center justify-center">
-                    <FaFacebookSquare className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-brand-muted uppercase font-mono">Communications Hub</p>
-                    <p className="text-sm font-semibold group-hover:text-brand-electric transition-colors">Ellorum Web Solutions</p>
-                  </div>
-                </Link> */}
 
                 <Link
                   href="https://wa.me/2349126973160"
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center gap-4 group p-3 rounded-xl bg-white/2 hover:bg-white/5 transition-colors"
+                  className="flex items-center gap-4 group p-3 rounded-xl bg-white/2 hover:bg-white/5 transition-colors border border-transparent hover:border-white/5"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-green-500/10 text-green-400 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-lg bg-green-500/10 text-green-400 flex items-center justify-center shrink-0">
                     <FaWhatsappSquare className="w-5 h-5" />
                   </div>
                   <div>
@@ -260,13 +287,14 @@ export default function ContactPipeline() {
                     </p>
                   </div>
                 </Link>
+                
                 <Link
                   href="tel:+2349126973160"
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center gap-4 group p-3 rounded-xl bg-white/2 hover:bg-white/5 transition-colors"
+                  className="flex items-center gap-4 group p-3 rounded-xl bg-white/2 hover:bg-white/5 transition-colors border border-transparent hover:border-white/5"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-green-500/10 text-green-400 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-lg bg-green-500/10 text-green-400 flex items-center justify-center shrink-0">
                     <Phone className="w-5 h-5" />
                   </div>
                   <div>
@@ -297,7 +325,7 @@ export default function ContactPipeline() {
             </div>
 
             {/* Quick Answer Sidebar Card */}
-            <div className="glass-panel rounded-2xl p-6 border-white/10 space-y-4">
+            <div className="glass-panel rounded-2xl p-6 border border-white/10 space-y-4">
               <div className="flex items-center gap-2 text-brand-electric font-bold text-sm">
                 <HelpCircle className="w-4 h-4" /> Confidentiality Guaranteed
               </div>
