@@ -1,5 +1,5 @@
 import Link from "next/link";
-import {Phone, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Phone, ArrowRight, CheckCircle2 } from "lucide-react";
 import {
   FaFacebook,
   FaFacebookSquare,
@@ -9,18 +9,59 @@ import {
 import Image from "next/image";
 import { FaInstagram } from "react-icons/fa6";
 import { SiGmail } from "react-icons/si";
+import { useState } from "react";
 
 export default function Footer() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+  const [message, setMessage] = useState("");
+
+  const handleSubscribe = async(e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!email || !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+      setStatus("error");
+      setMessage("Please enter a valid email address.");
+      return;
+    }
+
+    setStatus("loading");
+    setMessage("");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "newsletter", email }),
+      });
+
+      if (res.ok) {
+        setStatus("success");
+        setMessage("Thanks — you're subscribed!");
+        setEmail("");
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setStatus("error");
+        setMessage(
+          data?.message || "Subscription failed. Please try again later.",
+        );
+      }
+    } catch {
+      setStatus("error");
+      setMessage("Network error. Please try again.");
+    }
+  };
+
   const standardInclusions = [
     "Google Search Indexing",
     "SEO Optimization",
-    "Free Google Business Profile Setup"
+    "Free Google Business Profile Setup",
   ];
 
   return (
     <footer className="bg-brand-bg border-t border-white/5 pt-20 pb-10 relative z-20">
       <div className="container mx-auto px-6">
-        
         {/* Value-Added Trust Statement Banner */}
         <div className="mb-16 p-6 rounded-2xl bg-white/2 border border-white/5 flex flex-col lg:flex-row items-center justify-between gap-6">
           <div className="space-y-1 text-center lg:text-left">
@@ -28,13 +69,14 @@ export default function Footer() {
               Every Website Includes
             </h3>
             <p className="text-xs text-brand-muted">
-              Standard performance and search features engineered into every single build.
+              Standard performance and search features engineered into every
+              single build.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 w-full lg:w-auto">
             {standardInclusions.map((feature, idx) => (
-              <div 
-                key={idx} 
+              <div
+                key={idx}
                 className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-white/2 border border-white/5 hover:border-brand-electric/20 transition-colors"
               >
                 <CheckCircle2 className="w-4 h-4 text-brand-electric shrink-0" />
@@ -88,27 +130,42 @@ export default function Footer() {
               </h4>
               <ul className="space-y-2.5 text-sm text-brand-muted">
                 <li>
-                  <Link href="/about" className="hover:text-white transition-colors">
+                  <Link
+                    href="/about"
+                    className="hover:text-white transition-colors"
+                  >
                     About Us
                   </Link>
                 </li>
                 <li>
-                  <Link href="/services" className="hover:text-white transition-colors">
+                  <Link
+                    href="/services"
+                    className="hover:text-white transition-colors"
+                  >
                     Our Services
                   </Link>
                 </li>
                 <li>
-                  <Link href="/portfolio" className="hover:text-white transition-colors">
+                  <Link
+                    href="/portfolio"
+                    className="hover:text-white transition-colors"
+                  >
                     Portfolio
                   </Link>
                 </li>
                 <li>
-                  <Link href="/faqs" className="hover:text-white transition-colors">
+                  <Link
+                    href="/faqs"
+                    className="hover:text-white transition-colors"
+                  >
                     FAQs
                   </Link>
                 </li>
                 <li>
-                  <Link href="/contact" className="hover:text-white transition-colors">
+                  <Link
+                    href="/contact"
+                    className="hover:text-white transition-colors"
+                  >
                     Contact Us
                   </Link>
                 </li>
@@ -153,24 +210,40 @@ export default function Footer() {
               Stay Updated
             </h4>
             <p className="text-brand-muted text-xs leading-relaxed">
-              Subscribe to receive expert insights, website optimization tips, SEO
-              strategies, digital marketing updates, and the latest technology
-              trends to help your business grow online.
+              Subscribe to receive expert insights, website optimization tips,
+              SEO strategies, digital marketing updates, and the latest
+              technology trends to help your business grow online.
             </p>
-            <form className="flex gap-2 bg-white/2 border border-white/5 p-1.5 rounded-xl">
+            <form
+              onSubmit={handleSubscribe}
+              className="flex gap-2 bg-white/2 border border-white/5 p-1.5 rounded-xl"
+            >
               <input
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email address"
                 required
+                aria-label="Email address"
                 className="bg-transparent border-none text-xs text-white placeholder-brand-muted focus:outline-none px-3 w-full"
               />
               <button
                 type="submit"
-                className="bg-white/10 hover:bg-brand-electric hover:text-brand-bg transition-all p-2.5 rounded-lg"
+                disabled={status === "loading"}
+                className="bg-white/10 hover:bg-brand-electric hover:text-brand-bg transition-all p-2.5 rounded-lg disabled:opacity-50"
               >
                 <ArrowRight className="w-4 h-4" />
               </button>
             </form>
+
+            <div aria-live="polite" className="mt-2 text-xs">
+              {status === "success" && (
+                <span className="text-green-400">{message}</span>
+              )}
+              {status === "error" && (
+                <span className="text-rose-400">{message}</span>
+              )}
+            </div>
           </div>
         </div>
 
