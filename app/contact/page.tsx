@@ -270,7 +270,7 @@ export default function ContactPipeline() {
                     rel="noreferrer"
                     className="w-full flex items-center justify-center gap-2 bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/20 font-bold py-4 rounded-xl transition-all duration-300 shadow-md hover:shadow-green-500/5"
                   >
-                    <FaWhatsappSquare className="w-5 h-5" /> Chat via WhatsApp
+                    <FaWhatsappSquare className="w-5 h-5" /> Chat On WhatsApp
                   </Link>
                 </div>
               </form>

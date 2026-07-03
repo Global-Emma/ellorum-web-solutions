@@ -7,12 +7,16 @@ import {
   HelpCircle,
   Target,
   Award,
+  Sparkles,
+  Terminal,
+  Search,
+  FastForward,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { previewServices } from "@/lib/utils";
+import { FaWhatsapp } from "react-icons/fa";
 
 export default function HomePage() {
-
   return (
     <>
       <HeroDynamic />
@@ -174,7 +178,81 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* <TechStack /> */}
+      <section className="py-24 relative overflow-hidden bg-brand-dark">
+        {/* Ambient background glow effects */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand-electric/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-0 right-10 w-[300px] h-[300px] bg-brand-neon/5 rounded-full blur-[100px] pointer-events-none" />
+
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="max-w-5xl mx-auto glass-panel rounded-3xl p-8 md:p-16 border border-white/10 relative overflow-hidden shadow-2xl shadow-brand-electric/5">
+            {/* Subtle Grid Pattern Overlay */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
+
+            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              {/* Value Proposition Text */}
+              <div className="lg:col-span-7 space-y-6 text-left">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-brand-electric text-xs font-mono tracking-wide uppercase">
+                  <Terminal className="w-3.5 h-3.5" />{" "}
+                  {"LET'S BUILD YOUR NEXT DIGITAL SUCCESS"}
+                </div>
+
+                <h2 className="text-3xl md:text-5xl font-bold font-display tracking-tight text-white leading-tight">
+                  Ready to bring your Ideas into{" "}
+                  <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-electric to-brand-neon">
+                    Life?
+                  </span>
+                </h2>
+
+                <p className="text-brand-muted text-sm md:text-base max-w-xl leading-relaxed">
+                  Whether you need a professional website, an e-commerce store,
+                  a custom mobile app, or a complete digital solution, Ellorum
+                  Web Solutions is here to help. We build fast, secure, and
+                  SEO-friendly platforms that attract more customers, strengthen
+                  your brand, and help your business grow with confidence.
+                </p>
+              </div>
+
+              {/* Action Matrix Buttons */}
+              <div className="lg:col-span-5 flex flex-col sm:flex-row lg:flex-col gap-4 w-full lg:pl-6">
+                <Link
+                  href="/contact"
+                  className="group flex-1 flex items-center justify-center gap-2 bg-linear-to-r from-brand-electric to-brand-neon text-brand-bg font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-brand-electric/20 transition-all duration-300 transform hover:-translate-y-0.5 cursor-pointer text-center"
+                >
+                  Start Your Project
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+
+                <Link
+                  href="https://wa.me/2349126973160"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group flex-1 flex items-center justify-center gap-2 bg-white/5 hover:bg-green-500/10 text-white hover:text-green-400 border border-white/10 hover:border-green-500/20 font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:-translate-y-0.5"
+                >
+                  <FaWhatsapp className="w-5 h-5 text-green-400 group-hover:scale-110 transition-transform" />
+                  Chat on Whatsapp
+                </Link>
+              </div>
+            </div>
+
+            {/* Bottom Trust Indicators */}
+            <div className="mt-12 pt-8 border-t border-white/5 flex flex-wrap gap-6 items-center justify-start text-[11px] font-mono text-brand-muted uppercase tracking-wider">
+              <span className="flex items-center gap-1.5">
+                <FastForward className="w-3.5 h-3.5 text-brand-electric" />{" "}
+                Fast, Secure & Scalable
+              </span>
+              <span className="hidden sm:inline text-white/10">•</span>
+              <span className="flex items-center gap-1.5">
+                <Search className="w-3.5 h-3.5 text-brand-neon" /> Clean,
+                SEO & Google Search Ready
+              </span>
+              <span className="hidden sm:inline text-white/10">•</span>
+              <span className="flex items-center gap-1.5">
+                🚀 Built to Attract More Customers
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
     </>
   );
 }
