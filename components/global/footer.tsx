@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import { Phone, ArrowRight, CheckCircle2 } from "lucide-react";
 import {
@@ -230,7 +231,7 @@ export default function Footer() {
               <button
                 type="submit"
                 disabled={status === "loading"}
-                className="bg-white/10 hover:bg-brand-electric hover:text-brand-bg transition-all p-2.5 rounded-lg disabled:opacity-50"
+                className="bg-white/10 hover:bg-brand-electric cursor-pointer hover:text-brand-bg transition-all p-2.5 rounded-lg disabled:opacity-50"
               >
                 <ArrowRight className="w-4 h-4" />
               </button>

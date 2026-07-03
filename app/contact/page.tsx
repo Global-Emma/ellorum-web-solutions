@@ -1,6 +1,13 @@
 "use client";
 import { useState, FormEvent } from "react";
-import { Phone, Mail, Send, CheckCircle2, HelpCircle, Loader2 } from "lucide-react";
+import {
+  Phone,
+  Mail,
+  Send,
+  CheckCircle2,
+  HelpCircle,
+  Loader2,
+} from "lucide-react";
 import Link from "next/link";
 import {
   FaInstagramSquare,
@@ -19,7 +26,7 @@ export default function ContactPipeline() {
     budget: "",
     message: "",
   });
-  
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -46,7 +53,9 @@ export default function ContactPipeline() {
       setIsSubmitted(true);
     } catch (error) {
       console.error("Error submitting form:", error);
-      setErrorMessage("Transmission failed. Please check your connection or contact us directly.");
+      setErrorMessage(
+        "Transmission failed. Please check your connection or contact us directly.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -174,8 +183,15 @@ export default function ContactPipeline() {
                     }
                     className="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-electric text-white transition-colors disabled:opacity-50"
                   >
+                    <option value="" className="bg-brand-dark text-brand-muted">
+                      Select a service category
+                    </option>
                     {previewServices.map((p) => (
-                      <option key={p.id} value={p.title} className="bg-brand-dark text-white">
+                      <option
+                        key={p.id}
+                        value={p.title}
+                        className="bg-brand-dark text-white"
+                      >
                         {p.title}
                       </option>
                     ))}
@@ -221,21 +237,42 @@ export default function ContactPipeline() {
                   </p>
                 )}
 
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-brand-electric to-brand-neon text-brand-bg font-bold py-4 rounded-xl shadow-lg hover:shadow-brand-electric/20 transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isSubmitting ? (
-                    <>
-                      Sending Transmission <Loader2 className="w-4 h-4 animate-spin" />
-                    </>
-                  ) : (
-                    <>
-                      Send Message <Send className="w-4 h-4" />
-                    </>
-                  )}
-                </button>
+                <div className="space-y-4 pt-2">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-brand-electric to-brand-neon text-brand-bg font-bold py-4 rounded-xl shadow-lg hover:shadow-brand-electric/20 transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        Sending Transmission{" "}
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      </>
+                    ) : (
+                      <>
+                        Send Message <Send className="w-4 h-4" />
+                      </>
+                    )}
+                  </button>
+
+                  <div className="relative flex items-center justify-center">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-white/5"></div>
+                    </div>
+                    <span className="relative px-4 text-[10px] uppercase font-mono bg-[#0b0c10] text-brand-muted">
+                      Or connect instantly
+                    </span>
+                  </div>
+
+                  <Link
+                    href="https://wa.me/2349126973160"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="w-full flex items-center justify-center gap-2 bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/20 font-bold py-4 rounded-xl transition-all duration-300 shadow-md hover:shadow-green-500/5"
+                  >
+                    <FaWhatsappSquare className="w-5 h-5" /> Chat via WhatsApp
+                  </Link>
+                </div>
               </form>
             )}
           </div>
@@ -280,14 +317,14 @@ export default function ContactPipeline() {
                   </div>
                   <div>
                     <p className="text-[10px] text-brand-muted uppercase font-mono">
-                      Direct Whatsapp Response Desk
+                      Direct WhatsApp Response Desk
                     </p>
                     <p className="text-sm font-semibold group-hover:text-green-400 transition-colors">
                       (+234) 912 697 3160
                     </p>
                   </div>
                 </Link>
-                
+
                 <Link
                   href="tel:+2349126973160"
                   target="_blank"
