@@ -382,13 +382,13 @@ export default function ContactPipeline() {
 
               <div className="pt-4 border-t border-white/5 flex gap-3">
                 <Link
-                  href="https://instagram.com/@ellorumwebsolutions"
+                  href="https://instagram.com/ellorumwebsolutions"
                   className="w-8 h-8 rounded-lg bg-white/5 hover:bg-brand-electric hover:text-brand-bg flex items-center justify-center transition-colors text-brand-muted text-sm"
                 >
                   <FaInstagramSquare className="w-4 h-4" />
                 </Link>
                 <Link
-                  href="https://facebook.com/ellorumwebsolutions"
+                  href="https://web.facebook.com/profile.php?id=61570738529165"
                   className="w-8 h-8 rounded-lg bg-white/5 hover:bg-brand-electric hover:text-brand-bg flex items-center justify-center transition-colors text-brand-muted text-sm"
                 >
                   <FaFacebookSquare className="w-4 h-4" />

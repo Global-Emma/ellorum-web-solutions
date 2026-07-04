@@ -110,13 +110,13 @@ export default function Footer() {
             </p>
             <div className="flex gap-3 pt-2">
               <Link
-                href="https://instagram.com/@ellorumwebsolutions"
+                href="https://instagram.com/ellorumwebsolutions"
                 className="text-brand-muted hover:text-brand-electric transition-colors"
               >
                 <FaInstagramSquare className="w-4 h-4" />
               </Link>
               <Link
-                href="https://facebook.com/ellorumwebsolutions"
+                href="https://web.facebook.com/profile.php?id=61570738529165"
                 className="text-brand-muted hover:text-brand-electric transition-colors"
               >
                 <FaFacebookSquare className="w-4 h-4" />
@@ -192,12 +192,12 @@ export default function Footer() {
                     <FaWhatsapp className="w-3.5 h-3.5" /> (+234) 912 697 3160
                   </li>
                 </Link>
-                <Link href={"https://instagram.com/@ellorumwebsolutions"}>
+                <Link href={"https://instagram.com/ellorumwebsolutions"}>
                   <li className="flex hover:text-white transition-colors items-center gap-2">
                     <FaInstagram className="w-3.5 h-3.5" /> @ellorumwebsolutions
                   </li>
                 </Link>
-                <Link href="https://facebook.com/ellorumwebsolutions">
+                <Link href="https://web.facebook.com/profile.php?id=61570738529165">
                   <li className="flex hover:text-white transition-colors items-center gap-2">
                     <FaFacebook className="w-3.5 h-3.5" /> Ellorum Web Solutions
                   </li>
