@@ -31,35 +31,45 @@ export default function ContactPipeline() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleSubmitPipeline = async (e: FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setErrorMessage(null);
+const handleSubmitPipeline = async (e: FormEvent) => {
+  e.preventDefault();
+  setIsSubmitting(true);
+  setErrorMessage(null);
 
-    try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formState),
-      });
+  try {
+    const response = await fetch("/api/contact", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formState),
+    });
 
-      if (!response.ok) {
-        throw new Error("Failed to dispatch payload to server registry.");
-      }
-
-      await response.json();
-      setIsSubmitted(true);
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      setErrorMessage(
-        "Transmission failed. Please check your connection or contact us directly.",
-      );
-    } finally {
-      setIsSubmitting(false);
+    if (!response.ok) {
+      throw new Error("Failed to dispatch payload to server registry.");
     }
-  };
+
+    await response.json();
+
+    setIsSubmitted(true);
+    
+    // Notify Meta Ad Auction that a high-value lead was acquired
+    if (typeof window !== "undefined" && window.fbq) {
+      window.fbq("track", "Lead", {
+        content_name: formState.projectType,
+        value: parseFloat(formState.budget.replace(/,/g, "")) || 0, // Strips commas if a user types '100,000'
+        currency: "NGN",
+      });
+    }
+  } catch (error) {
+    console.error("Error submitting form:", error);
+    setErrorMessage(
+      "Transmission failed. Please check your connection or contact us directly.",
+    );
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <section className="py-32 relative overflow-hidden">

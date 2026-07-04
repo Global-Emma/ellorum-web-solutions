@@ -4,6 +4,9 @@ import SmoothScrollProvider from "@/components/global/smooth-scroll";
 import Navbar from "@/components/global/navbar";
 import Footer from "@/components/global/footer";
 import GlowCursor from "@/components/global/glow-cursor";
+import { Suspense } from "react";
+import MetaPixel from "@/components/analytics/meta-pixel";
+import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
 
 export const metadata: Metadata = {
   title: "Ellorum Web Solutions | Next-Gen Digital Transformation Agency",
@@ -32,8 +35,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main className="min-h-screen relative z-10">
             {children}
           </main>
+          
           <Footer />
         </SmoothScrollProvider>
+
+        {/* Tracking & Data Analytics Pipelines */}
+        <Suspense fallback={null}>
+          <MetaPixel />
+        </Suspense>
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || ""} />
+        
+        {/* Next.js Optimized Google Tag Manager Container */}
+        <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID || "GTM-WNB5FCJM"} />
       </body>
     </html>
   );
