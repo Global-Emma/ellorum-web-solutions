@@ -7,7 +7,6 @@ import {
   HelpCircle,
   Target,
   Award,
-  Sparkles,
   Terminal,
   Search,
   FastForward,
@@ -17,6 +16,14 @@ import { previewServices } from "@/lib/utils";
 import { FaWhatsapp } from "react-icons/fa";
 
 export default function HomePage() {
+  const handleWhatsAppClick = () => {
+    if (typeof window !== "undefined" && window.fbq) {
+      window.fbq("track", "Contact", {
+        content_name: "WhatsApp Lead Redirect",
+        content_category: "Instant Messaging",
+      });
+    }
+  };
   return (
     <>
       <HeroDynamic />
@@ -180,8 +187,8 @@ export default function HomePage() {
 
       <section className="py-24 relative overflow-hidden bg-brand-dark">
         {/* Ambient background glow effects */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand-electric/10 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-0 right-10 w-[300px] h-[300px] bg-brand-neon/5 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-125 h-125 bg-brand-electric/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-0 right-10 w-75 h-75 bg-brand-neon/5 rounded-full blur-[100px] pointer-events-none" />
 
         <div className="container mx-auto px-6 relative z-10">
           <div className="max-w-5xl mx-auto glass-panel rounded-3xl p-8 md:p-16 border border-white/10 relative overflow-hidden shadow-2xl shadow-brand-electric/5">
@@ -226,6 +233,7 @@ export default function HomePage() {
                   href="https://wa.me/2349126973160"
                   target="_blank"
                   rel="noreferrer"
+                  onClick={handleWhatsAppClick}
                   className="group flex-1 flex items-center justify-center gap-2 bg-white/5 hover:bg-green-500/10 text-white hover:text-green-400 border border-white/10 hover:border-green-500/20 font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:-translate-y-0.5"
                 >
                   <FaWhatsapp className="w-5 h-5 text-green-400 group-hover:scale-110 transition-transform" />
