@@ -1,5 +1,16 @@
 import { NextResponse } from "next/server";
+import { headers } from "next/headers";
 import nodemailer from "nodemailer";
+import crypto from "crypto";
+
+// Helper function to hash user details for Meta CAPI compliance (SHA-256)
+const hashData = (data: string | undefined) => {
+  if (!data) return "";
+  return crypto
+    .createHash("sha256")
+    .update(data.trim().toLowerCase())
+    .digest("hex");
+};
 
 const createTransporter = () =>
   nodemailer.createTransport({
@@ -14,7 +25,9 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    // Handle newsletter signup
+    // ==========================================
+    // 1. PIPELINE A: NEWSLETTER SIGNUP FLOW
+    // ==========================================
     if (body?.type === "newsletter") {
       const { email } = body;
       if (!email) {
@@ -31,10 +44,12 @@ export async function POST(request: Request) {
       };
 
       await transporter.sendMail(mailOptions);
-      return NextResponse.json({ message: "Subscribed" }, { status: 200 });
+      return NextResponse.json({ message: "Subscribed successfully" }, { status: 200 });
     }
 
-    // Existing project inquiry handling (backwards compatible)
+    // ==========================================
+    // 2. PIPELINE B: HIGH-VALUE PROJECT INQUIRY FLOW
+    // ==========================================
     const {
       fullName,
       businessName,
@@ -43,10 +58,11 @@ export async function POST(request: Request) {
       projectType,
       budget,
       message,
+      eventId, // Sent from your frontend payload for event deduplication
     } = body || {};
 
+    // Internal Email Dispatch via Nodemailer
     const transporter = createTransporter();
-
     const mailOptions = {
       from: email || process.env.EMAIL_USER,
       to: process.env.EMAIL_USER,
@@ -79,10 +95,64 @@ export async function POST(request: Request) {
       `,
     };
 
+    // Wait for internal email notification to complete successfully
     await transporter.sendMail(mailOptions);
-    return NextResponse.json({ message: "Email sent successfully" }, { status: 200 });
+
+    // ==========================================
+    // 3. PIPELINE C: META CONVERSIONS API DISPATCH
+    // ==========================================
+    // Wrapping in a localized try-catch ensures that even if Meta's servers hit a hiccup, 
+    // the user's form submission isn't ruined for them on the frontend.
+    try {
+      const reqHeaders = await headers();
+      const ip = reqHeaders.get("x-forwarded-for")?.split(",")[0] || "127.0.0.1";
+      const userAgent = reqHeaders.get("user-agent") || "";
+
+      const pixelId = process.env.META_PIXEL_ID || process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID;
+      const accessToken = process.env.META_CAPI_ACCESS_TOKEN;
+
+      if (pixelId && accessToken) {
+        const capiPayload = {
+          data: [
+            {
+              event_name: "Lead",
+              event_time: Math.floor(Date.now() / 1000),
+              action_source: "website",
+              event_id: eventId, // Critical: Must match client-side event_id to prevent double counting
+              event_source_url: request.url,
+              user_data: {
+                client_ip_address: ip,
+                client_user_agent: userAgent,
+                em: email ? [hashData(email)] : [], // Meta requires array formatting for hashed values
+                ph: phone ? [hashData(phone)] : [],
+              },
+              custom_data: {
+                content_name: projectType,
+                value: parseFloat(budget?.replace(/,/g, "")) || 0,
+                currency: "NGN",
+              },
+            },
+          ],
+        };
+
+        await fetch(
+          `https://graph.facebook.com/v19.0/${pixelId}/events?access_token=${accessToken}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(capiPayload),
+          }
+        );
+      }
+    } catch (metaError) {
+      // Log tracking errors internally without altering response codes
+      console.error("Background CAPI Transmission Failure:", metaError);
+    }
+
+    return NextResponse.json({ message: "Inquiry transmitted successfully" }, { status: 200 });
+
   } catch (error) {
-    console.error("Nodemailer error:", error);
-    return NextResponse.json({ message: "Failed to transmit email package" }, { status: 500 });
+    console.error("Global Server Pipeline Error:", error);
+    return NextResponse.json({ message: "Failed to process form payload" }, { status: 500 });
   }
 }

@@ -3,7 +3,6 @@
 import { usePathname, useSearchParams } from "next/navigation";
 import Script from "next/script";
 import { useEffect } from "react";
-import Image from "next/image";
 
 const FB_PIXEL_ID = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID;
 
@@ -13,7 +12,7 @@ export default function MetaPixel() {
 
   useEffect(() => {
     if (!FB_PIXEL_ID || typeof window.fbq === "undefined") return;
-    
+
     // Track page views on route changes
     window.fbq("track", "PageView");
   }, [pathname, searchParams]);
@@ -42,7 +41,8 @@ export default function MetaPixel() {
         }}
       />
       <noscript>
-        <Image
+        {/* Changed to standard <img> tag for true non-JS fallback execution */}
+        <img
           height="1"
           width="1"
           style={{ display: "none" }}

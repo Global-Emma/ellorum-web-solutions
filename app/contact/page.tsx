@@ -31,45 +31,66 @@ export default function ContactPipeline() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-const handleSubmitPipeline = async (e: FormEvent) => {
-  e.preventDefault();
-  setIsSubmitting(true);
-  setErrorMessage(null);
+  const handleSubmitPipeline = async (e: FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setErrorMessage(null);
 
-  try {
-    const response = await fetch("/api/contact", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formState),
-    });
+    // 1. Generate a completely unique identifier for this specific action
+    const uniqueEventId = `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-    if (!response.ok) {
-      throw new Error("Failed to dispatch payload to server registry.");
+    try {
+      // 2. Fire Browser Pixel instantly with the event ID (Deduplication Layer)
+      if (typeof window !== "undefined" && window.fbq) {
+        window.fbq(
+          "track",
+          "Lead",
+          {
+            content_name: formState.projectType,
+            value: parseFloat(formState.budget?.replace(/,/g, "")) || 0,
+            currency: "NGN",
+          },
+          { eventID: uniqueEventId },
+        ); // Passed as the 4th parameter matching configuration
+      }
+
+      // 3. Dispatch the payload along with the identical Event ID to your server CAPI function
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formState,
+          eventId: uniqueEventId, // Injected seamlessly into the payload
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to dispatch payload to server registry.");
+      }
+
+      await response.json();
+      setIsSubmitted(true);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setErrorMessage(
+        "Transmission failed. Please check your connection or contact us directly.",
+      );
+    } finally {
+      setIsSubmitting(false);
     }
+  };
 
-    await response.json();
-
-    setIsSubmitted(true);
-    
-    // Notify Meta Ad Auction that a high-value lead was acquired
+  // 4. Tracking function for instant outbound WhatsApp redirects
+  const handleWhatsAppClick = () => {
     if (typeof window !== "undefined" && window.fbq) {
-      window.fbq("track", "Lead", {
-        content_name: formState.projectType,
-        value: parseFloat(formState.budget.replace(/,/g, "")) || 0, // Strips commas if a user types '100,000'
-        currency: "NGN",
+      window.fbq("track", "Contact", {
+        content_name: "WhatsApp Lead Redirect",
+        content_category: "Instant Messaging",
       });
     }
-  } catch (error) {
-    console.error("Error submitting form:", error);
-    setErrorMessage(
-      "Transmission failed. Please check your connection or contact us directly.",
-    );
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+  };
 
   return (
     <section className="py-32 relative overflow-hidden">
@@ -248,6 +269,7 @@ const handleSubmitPipeline = async (e: FormEvent) => {
                 )}
 
                 <div className="space-y-4 pt-2">
+                  {/* Standard Form Submission CTA */}
                   <button
                     type="submit"
                     disabled={isSubmitting}
@@ -265,6 +287,7 @@ const handleSubmitPipeline = async (e: FormEvent) => {
                     )}
                   </button>
 
+                  {/* Visual Separator */}
                   <div className="relative flex items-center justify-center">
                     <div className="absolute inset-0 flex items-center">
                       <div className="w-full border-t border-white/5"></div>
@@ -274,10 +297,12 @@ const handleSubmitPipeline = async (e: FormEvent) => {
                     </span>
                   </div>
 
+                  {/* WhatsApp Conversion Tracked Link */}
                   <Link
                     href="https://wa.me/2349126973160"
                     target="_blank"
                     rel="noreferrer"
+                    onClick={handleWhatsAppClick} // Tracks click instantly as browser event before shifting focus
                     className="w-full flex items-center justify-center gap-2 bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/20 font-bold py-4 rounded-xl transition-all duration-300 shadow-md hover:shadow-green-500/5"
                   >
                     <FaWhatsappSquare className="w-5 h-5" /> Chat On WhatsApp

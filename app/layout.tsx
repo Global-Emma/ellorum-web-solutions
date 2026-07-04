@@ -9,13 +9,13 @@ import MetaPixel from "@/components/analytics/meta-pixel";
 import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
 
 export const metadata: Metadata = {
-  title: "Ellorum Web Solutions | Next-Gen Digital Transformation Agency",
-  description: "Accelerate your market capture through futuristic web development, high-tier branding strategies, tailored apps, and premium user experience designs.",
-  metadataBase: new URL("https://ellorum.com"),
+  title: "Ellorum Web Solutions | Next-Gen Digital Agency",
+  description: "Grow your business with modern websites, custom mobile apps, strategic branding, SEO, and digital solutions designed to attract more customers, strengthen your online presence, and drive long-term success.",
+  metadataBase: new URL("https://ellorumwebsolutions.vercel.app"),
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://ellorum.com",
+    url: "https://ellorumwebsolutions.vercel.app",
     siteName: "Ellorum Web Solutions",
     images: [{ url: "/og-premium-banner.png", width: 1200, height: 630, alt: "Ellorum Tech Platform" }],
   },
