@@ -15,7 +15,9 @@ interface FormData {
 export default function TrustTestPage() {
   const [step, setStep] = useState<number>(1);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
 
   const [formData, setFormData] = useState<FormData>({
     businessName: "",
@@ -34,7 +36,10 @@ export default function TrustTestPage() {
     setStep((prev) => prev + 1);
   };
 
-  const handleSelectOption = (key: "hasWebsite" | "hasInfo", value: "yes" | "no") => {
+  const handleSelectOption = (
+    key: "hasWebsite" | "hasInfo",
+    value: "yes" | "no",
+  ) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
     setStep((prev) => prev + 1);
   };
@@ -48,12 +53,30 @@ export default function TrustTestPage() {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus("idle");
+    // Generate a completely unique identifier for this specific action
+    const uniqueEventId = `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     try {
+      // Fire Browser Pixel instantly with the event ID (Deduplication Layer)
+      if (typeof window !== "undefined" && window.fbq) {
+        window.fbq(
+          "track",
+          "Lead",
+          {
+            content_name: formData.businessName,
+            value: formData.leadWhatsApp,
+          },
+          { eventID: uniqueEventId },
+        ); // Passed as the 4th parameter matching configuration
+      }
+
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          eventId: uniqueEventId,
+        }),
       });
 
       if (response.ok) {
@@ -101,7 +124,8 @@ export default function TrustTestPage() {
             People judge your business before they ever call you.
           </h1>
           <p className="text-lg text-slate-400 font-normal">
-            A simple search on Google can decide if a buyer trusts you. This happens before you ever speak to them.
+            A simple search on Google can decide if a buyer trusts you. This
+            happens before you ever speak to them.
           </p>
         </header>
 
@@ -116,25 +140,41 @@ export default function TrustTestPage() {
             {/* Business A */}
             <div className="border-2 border-dashed border-[#2ECC71] rounded-lg p-3 bg-[#2ECC71]/2">
               <div className="text-xs text-slate-500">www.businessA.com</div>
-              <div className="text-lg text-[#1A0DAB] font-semibold">Business A</div>
+              <div className="text-lg text-[#1A0DAB] font-semibold">
+                Business A
+              </div>
               <div className="text-sm text-slate-600">
                 <span className="text-[#F4B400]">★★★★★</span> 5.0 rating
               </div>
               <div className="flex gap-1.5 mt-2 flex-wrap">
-                <span className="text-[11px] bg-slate-200 px-2 py-0.5 rounded text-slate-700 font-medium">✓ Website</span>
-                <span className="text-[11px] bg-slate-200 px-2 py-0.5 rounded text-slate-700 font-medium">✓ Photos</span>
-                <span className="text-[11px] bg-slate-200 px-2 py-0.5 rounded text-slate-700 font-medium">✓ Info</span>
+                <span className="text-[11px] bg-slate-200 px-2 py-0.5 rounded text-slate-700 font-medium">
+                  ✓ Website
+                </span>
+                <span className="text-[11px] bg-slate-200 px-2 py-0.5 rounded text-slate-700 font-medium">
+                  ✓ Photos
+                </span>
+                <span className="text-[11px] bg-slate-200 px-2 py-0.5 rounded text-slate-700 font-medium">
+                  ✓ Info
+                </span>
               </div>
             </div>
 
             {/* Business B */}
             <div className="border-2 border-dashed border-[#E8402B] rounded-lg p-3 bg-[#E8402B]/2 relative">
-              <div className="text-xs text-slate-500">facebook.com/empty-page</div>
-              <div className="text-lg text-[#1A0DAB] font-semibold">Business B</div>
+              <div className="text-xs text-slate-500">
+                facebook.com/empty-page
+              </div>
+              <div className="text-lg text-[#1A0DAB] font-semibold">
+                Business B
+              </div>
               <div className="text-sm text-slate-600">No reviews yet</div>
               <div className="flex gap-1.5 mt-2 flex-wrap">
-                <span className="text-[11px] bg-red-100 px-2 py-0.5 rounded text-red-600 font-medium">✗ No Website</span>
-                <span className="text-[11px] bg-red-100 px-2 py-0.5 rounded text-red-600 font-medium">✗ No Photos</span>
+                <span className="text-[11px] bg-red-100 px-2 py-0.5 rounded text-red-600 font-medium">
+                  ✗ No Website
+                </span>
+                <span className="text-[11px] bg-red-100 px-2 py-0.5 rounded text-red-600 font-medium">
+                  ✗ No Photos
+                </span>
               </div>
               <div className="text-[#E8402B] font-bold text-xs mt-3 flex items-center gap-1.5">
                 🛑 Customers skip this one.
@@ -158,19 +198,27 @@ export default function TrustTestPage() {
 
         {/* LAYMAN STORY INTRO */}
         <section className="space-y-4 mb-14">
-          <h2 className="text-2xl font-extrabold mb-4 leading-snug">The first look happens before you know it.</h2>
+          <h2 className="text-2xl font-extrabold mb-4 leading-snug">
+            The first look happens before you know it.
+          </h2>
           <p className="text-slate-200">
-            Think about today. Someone heard about your business. They opened Google on their phone. They looked for your name.
+            Think about today. Someone heard about your business. They opened
+            Google on their phone. They looked for your name.
           </p>
-          <p className="text-slate-200">Did they find your details? Or did they see an empty page?</p>
+          <p className="text-slate-200">
+            Did they find your details? Or did they see an empty page?
+          </p>
           <p className="text-slate-200">
             If your page is empty, strangers feel unsafe.{" "}
             <strong className="text-[#E2B233] font-semibold">
-              They do not say goodbye. They do not send a WhatsApp message. They just leave.
+              They do not say goodbye. They do not send a WhatsApp message. They
+              just leave.
             </strong>
           </p>
           <p className="text-slate-200">
-            You lose a customer, and you never know why. It is not because your price is high. It is because they could not find a reason to trust you.
+            You lose a customer, and you never know why. It is not because your
+            price is high. It is because they could not find a reason to trust
+            you.
           </p>
         </section>
 
@@ -178,28 +226,41 @@ export default function TrustTestPage() {
 
         {/* PROBLEM DEEP DIVE */}
         <section className="mb-14">
-          <h2 className="text-2xl font-extrabold mb-4">Good businesses still lose customers quietly.</h2>
+          <h2 className="text-2xl font-extrabold mb-4">
+            Good businesses still lose customers quietly.
+          </h2>
           <p className="text-slate-200 mb-6">
-            You work hard. Your service is great. But people cannot see that behind the scenes. If your online space looks empty, they continue looking elsewhere.
+            You work hard. Your service is great. But people cannot see that
+            behind the scenes. If your online space looks empty, they continue
+            looking elsewhere.
           </p>
 
           <div className="flex flex-col gap-4">
             <div className="bg-[#0F172A] border border-white/5 p-5 rounded-xl">
-              <h3 className="text-base text-[#E2B233] font-bold mb-1.5">No Clear Answers</h3>
+              <h3 className="text-base text-[#E2B233] font-bold mb-1.5">
+                No Clear Answers
+              </h3>
               <p className="text-sm text-slate-400">
-                Customers have simple questions. If they find no answers, they look for someone else.
+                Customers have simple questions. If they find no answers, they
+                look for someone else.
               </p>
             </div>
             <div className="bg-[#0F172A] border border-white/5 p-5 rounded-xl">
-              <h3 className="text-base text-[#E2B233] font-bold mb-1.5">Bad First Look</h3>
+              <h3 className="text-base text-[#E2B233] font-bold mb-1.5">
+                Bad First Look
+              </h3>
               <p className="text-sm text-slate-400">
-                An empty screen creates doubt. It makes it hard for strangers to choose you.
+                An empty screen creates doubt. It makes it hard for strangers to
+                choose you.
               </p>
             </div>
             <div className="bg-[#0F172A] border border-white/5 p-5 rounded-xl">
-              <h3 className="text-base text-[#E2B233] font-bold mb-1.5">Lost Attention</h3>
+              <h3 className="text-base text-[#E2B233] font-bold mb-1.5">
+                Lost Attention
+              </h3>
               <p className="text-sm text-slate-400">
-                Buyers want things fast. They will click on a competitor who looks ready.
+                Buyers want things fast. They will click on a competitor who
+                looks ready.
               </p>
             </div>
           </div>
@@ -209,16 +270,27 @@ export default function TrustTestPage() {
 
         {/* SOLUTION MATRIX */}
         <section className="mb-14">
-          <h2 className="text-2xl font-extrabold mb-4">Build trust before the first conversation.</h2>
+          <h2 className="text-2xl font-extrabold mb-4">
+            Build trust before the first conversation.
+          </h2>
           <p className="text-slate-200 mb-6">
-            A clean page shows people you are open and ready. It makes buying decisions easy for your next customer.
+            A clean page shows people you are open and ready. It makes buying
+            decisions easy for your next customer.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="bg-white/3 border border-white/5 p-3 rounded-lg text-sm font-medium">✓ Clear details online</div>
-            <div className="bg-white/3 border border-white/5 p-3 rounded-lg text-sm font-medium">✓ Good first impression</div>
-            <div className="bg-white/3 border border-white/5 p-3 rounded-lg text-sm font-medium">✓ Safe customer feelings</div>
-            <div className="bg-white/3 border border-white/5 p-3 rounded-lg text-sm font-medium">✓ More WhatsApp calls</div>
+            <div className="bg-white/3 border border-white/5 p-3 rounded-lg text-sm font-medium">
+              ✓ Clear details online
+            </div>
+            <div className="bg-white/3 border border-white/5 p-3 rounded-lg text-sm font-medium">
+              ✓ Good first impression
+            </div>
+            <div className="bg-white/3 border border-white/5 p-3 rounded-lg text-sm font-medium">
+              ✓ Safe customer feelings
+            </div>
+            <div className="bg-white/3 border border-white/5 p-3 rounded-lg text-sm font-medium">
+              ✓ More WhatsApp calls
+            </div>
           </div>
         </section>
 
@@ -227,15 +299,28 @@ export default function TrustTestPage() {
         {/* INTERACTIVE TRUST TEST SYSTEM */}
         <section id="audit" className="scroll-mt-10 mb-14">
           <div className="bg-[#0F172A] border border-[#D4AF37]/30 rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden">
-            <h2 className="text-2xl font-bold text-[#E2B233] mb-1">Take the Silent Trust Test</h2>
-            <p className="text-sm text-slate-400 mb-6">Answer simple questions to see your online score.</p>
+            <h2 className="text-2xl font-bold text-[#E2B233] mb-1">
+              Take the Silent Trust Test
+            </h2>
+            <p className="text-sm text-slate-400 mb-6">
+              Answer simple questions to see your online score.
+            </p>
 
             <div className="min-h-55 flex flex-col justify-center">
               <AnimatePresence mode="wait">
                 {/* Step 1 */}
                 {step === 1 && (
-                  <motion.div key="step1" variants={slideVariants} initial="initial" animate="animate" exit="exit" className="space-y-4">
-                    <p className="text-base font-semibold">What is your business name?</p>
+                  <motion.div
+                    key="step1"
+                    variants={slideVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    className="space-y-4"
+                  >
+                    <p className="text-base font-semibold">
+                      What is your business name?
+                    </p>
                     <input
                       type="text"
                       name="businessName"
@@ -245,7 +330,10 @@ export default function TrustTestPage() {
                       autoComplete="off"
                       className="w-full bg-black/20 border border-white/15 rounded-lg p-3.5 text-white text-base outline-none focus:border-[#E2B233] transition-colors"
                     />
-                    <button onClick={nextStep} className="w-full bg-[#E2B233] text-black p-4 font-bold rounded-lg transition-transform active:scale-98">
+                    <button
+                      onClick={nextStep}
+                      className="w-full bg-[#E2B233] text-black p-4 font-bold rounded-lg transition-transform active:scale-98"
+                    >
                       Next Step
                     </button>
                   </motion.div>
@@ -253,13 +341,28 @@ export default function TrustTestPage() {
 
                 {/* Step 2 */}
                 {step === 2 && (
-                  <motion.div key="step2" variants={slideVariants} initial="initial" animate="animate" exit="exit" className="space-y-4">
-                    <p className="text-base font-semibold">Do you have a professional website for your business?</p>
+                  <motion.div
+                    key="step2"
+                    variants={slideVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    className="space-y-4"
+                  >
+                    <p className="text-base font-semibold">
+                      Do you have a professional website for your business?
+                    </p>
                     <div className="flex gap-3">
-                      <button onClick={() => handleSelectOption("hasWebsite", "yes")} className="flex-1 bg-white/5 border border-white/15 text-white p-4 font-semibold rounded-lg hover:bg-white/10 transition-colors">
+                      <button
+                        onClick={() => handleSelectOption("hasWebsite", "yes")}
+                        className="flex-1 bg-white/5 border border-white/15 text-white p-4 font-semibold rounded-lg hover:bg-white/10 transition-colors"
+                      >
                         Yes
                       </button>
-                      <button onClick={() => handleSelectOption("hasWebsite", "no")} className="flex-1 bg-white/5 border border-white/15 text-white p-4 font-semibold rounded-lg hover:bg-white/10 transition-colors">
+                      <button
+                        onClick={() => handleSelectOption("hasWebsite", "no")}
+                        className="flex-1 bg-white/5 border border-white/15 text-white p-4 font-semibold rounded-lg hover:bg-white/10 transition-colors"
+                      >
                         No
                       </button>
                     </div>
@@ -268,13 +371,29 @@ export default function TrustTestPage() {
 
                 {/* Step 3 */}
                 {step === 3 && (
-                  <motion.div key="step3" variants={slideVariants} initial="initial" animate="animate" exit="exit" className="space-y-4">
-                    <p className="text-base font-semibold">Can customers see your clear phone number and work photos online?</p>
+                  <motion.div
+                    key="step3"
+                    variants={slideVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    className="space-y-4"
+                  >
+                    <p className="text-base font-semibold">
+                      Can customers see your clear phone number and work photos
+                      online?
+                    </p>
                     <div className="flex gap-3">
-                      <button onClick={() => handleSelectOption("hasInfo", "yes")} className="flex-1 bg-white/5 border border-white/15 text-white p-4 font-semibold rounded-lg hover:bg-white/10 transition-colors">
+                      <button
+                        onClick={() => handleSelectOption("hasInfo", "yes")}
+                        className="flex-1 bg-white/5 border border-white/15 text-white p-4 font-semibold rounded-lg hover:bg-white/10 transition-colors"
+                      >
                         Yes
                       </button>
-                      <button onClick={() => handleSelectOption("hasInfo", "no")} className="flex-1 bg-white/5 border border-white/15 text-white p-4 font-semibold rounded-lg hover:bg-white/10 transition-colors">
+                      <button
+                        onClick={() => handleSelectOption("hasInfo", "no")}
+                        className="flex-1 bg-white/5 border border-white/15 text-white p-4 font-semibold rounded-lg hover:bg-white/10 transition-colors"
+                      >
                         No
                       </button>
                     </div>
@@ -283,21 +402,37 @@ export default function TrustTestPage() {
 
                 {/* Step 4: Lead Generation Submission */}
                 {step === 4 && (
-                  <motion.div key="step4" variants={slideVariants} initial="initial" animate="animate" exit="exit" className="space-y-4">
+                  <motion.div
+                    key="step4"
+                    variants={slideVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    className="space-y-4"
+                  >
                     <div className="bg-[#E8402B]/10 border border-dashed border-[#E8402B] rounded-lg p-4 mb-2 text-sm text-red-200">
-                      {formData.hasWebsite === "no" || formData.hasInfo === "no" ? (
+                      {formData.hasWebsite === "no" ||
+                      formData.hasInfo === "no" ? (
                         <span>
-                          ⚠️ <strong>Warning for {formData.businessName}:</strong> Your search screen has gaps. Strangers are likely leaving your page to call competitors right now.
+                          ⚠️{" "}
+                          <strong>Warning for {formData.businessName}:</strong>{" "}
+                          Your search screen has gaps. Strangers are likely
+                          leaving your page to call competitors right now.
                         </span>
                       ) : (
                         <span className="text-emerald-300">
-                          👍 <strong>Status for {formData.businessName}:</strong> You have a basic start! However, you can still improve to stand out from competitors.
+                          👍{" "}
+                          <strong>Status for {formData.businessName}:</strong>{" "}
+                          You have a basic start! However, you can still improve
+                          to stand out from competitors.
                         </span>
                       )}
                     </div>
 
                     <p className="text-xs text-slate-400 leading-normal">
-                      We help business owners look real and trustworthy online. Leave your details below. We will show you how to improve your online presence.
+                      We help business owners look real and trustworthy online.
+                      Leave your details below. We will show you how to improve
+                      your online presence.
                     </p>
 
                     <form onSubmit={handleSubmit} className="space-y-3">
@@ -330,7 +465,9 @@ export default function TrustTestPage() {
                       />
 
                       {submitStatus === "error" && (
-                        <p className="text-xs text-red-400">Failed to save configuration. Please try again.</p>
+                        <p className="text-xs text-red-400">
+                          Failed to save configuration. Please try again.
+                        </p>
                       )}
 
                       <button
@@ -338,7 +475,9 @@ export default function TrustTestPage() {
                         disabled={isSubmitting}
                         className="w-full bg-[#E2B233] text-black p-4 font-bold rounded-lg disabled:opacity-50 transition-transform active:scale-98"
                       >
-                        {isSubmitting ? "Processing Setup..." : "Check My Business"}
+                        {isSubmitting
+                          ? "Processing Setup..."
+                          : "Check My Business"}
                       </button>
                     </form>
                   </motion.div>
@@ -346,11 +485,23 @@ export default function TrustTestPage() {
 
                 {/* Step 5: Thank You Response */}
                 {step === 5 && (
-                  <motion.div key="step5" variants={slideVariants} initial="initial" animate="animate" exit="exit" className="text-center space-y-3 py-6">
+                  <motion.div
+                    key="step5"
+                    variants={slideVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    className="text-center space-y-3 py-6"
+                  >
                     <div className="text-4xl">🎉</div>
-                    <h3 className="text-xl font-bold text-[#E2B233]">Thank you, {formData.leadName}!</h3>
+                    <h3 className="text-xl font-bold text-[#E2B233]">
+                      Thank you, {formData.leadName}!
+                    </h3>
                     <p className="text-sm text-slate-300 max-w-md mx-auto">
-                      We have compiled your audit data for <strong>{formData.businessName}</strong>. Our team will look up your search profile and reach out via WhatsApp at <strong>{formData.leadWhatsApp}</strong> shortly.
+                      We have compiled your audit data for{" "}
+                      <strong>{formData.businessName}</strong>. Our team will
+                      look up your search profile and reach out via WhatsApp at{" "}
+                      <strong>{formData.leadWhatsApp}</strong> shortly.
                     </p>
                   </motion.div>
                 )}
@@ -363,9 +514,13 @@ export default function TrustTestPage() {
         <section className="mb-14">
           <div className="bg-white/2 border-l-4 border-[#E2B233] p-5 rounded-r-lg">
             <p className="italic text-slate-200 text-sm mb-2">
-              {"A good online page made us look real. We became easy to find and trust."}
+              {
+                "A good online page made us look real. We became easy to find and trust."
+              }
             </p>
-            <span className="text-xs text-slate-400 font-bold">— Business Owner</span>
+            <span className="text-xs text-slate-400 font-bold">
+              — Business Owner
+            </span>
           </div>
         </section>
 
@@ -373,29 +528,42 @@ export default function TrustTestPage() {
         <section className="space-y-4">
           <h2 className="text-2xl font-extrabold mb-4">Questions?</h2>
           <div className="bg-[#0F172A] p-4 rounded-lg">
-            <h3 className="text-sm font-bold mb-2">Do I need a website if I use social media?</h3>
+            <h3 className="text-sm font-bold mb-2">
+              Do I need a website if I use social media?
+            </h3>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Social media helps people see your posts. A website shows you are a real business they can trust.
+              Social media helps people see your posts. A website shows you are
+              a real business they can trust.
             </p>
           </div>
           <div className="bg-[#0F172A] p-4 rounded-lg">
-            <h3 className="text-sm font-bold mb-2">How does the trust check work?</h3>
+            <h3 className="text-sm font-bold mb-2">
+              How does the trust check work?
+            </h3>
             <p className="text-xs text-slate-400 leading-relaxed">
-              We look at what shows up when people search your name. Then we show you how to make it look great.
+              We look at what shows up when people search your name. Then we
+              show you how to make it look great.
             </p>
           </div>
           <div className="bg-[#0F172A] p-4 rounded-lg">
-            <h3 className="text-sm font-bold mb-2">Is this only for big companies?</h3>
+            <h3 className="text-sm font-bold mb-2">
+              Is this only for big companies?
+            </h3>
             <p className="text-xs text-slate-400 leading-relaxed">
-              No. Small businesses need to look good too. It helps you get the first call from new clients.
+              No. Small businesses need to look good too. It helps you get the
+              first call from new clients.
             </p>
           </div>
         </section>
 
         {/* CLOSING CTA */}
         <section className="text-center mt-16 space-y-4">
-          <h2 className="text-2xl font-extrabold">Your next customer may search before they call.</h2>
-          <p className="text-sm text-slate-400">Make sure what they find builds confidence.</p>
+          <h2 className="text-2xl font-extrabold">
+            Your next customer may search before they call.
+          </h2>
+          <p className="text-sm text-slate-400">
+            Make sure what they find builds confidence.
+          </p>
           <a
             href="#audit"
             className="inline-block bg-[#E2B233] text-black px-8 py-4 font-bold rounded-lg shadow-lg shadow-[#E2B233]/20 transition-transform active:scale-98 hover:scale-102"

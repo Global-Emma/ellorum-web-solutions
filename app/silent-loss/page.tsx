@@ -54,12 +54,32 @@ export default function EllorumDiagnosticPage() {
     setIsSubmitting(true);
     setSubmitStatus("idle");
 
+     // Generate a completely unique identifier for this specific action
+    const uniqueEventId = `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
     try {
+
+      // Fire Browser Pixel instantly with the event ID (Deduplication Layer)
+      if (typeof window !== "undefined" && window.fbq) {
+        window.fbq(
+          "track",
+          "Lead",
+          {
+            content_name: formData.businessName,
+            value: formData.leadWhatsApp
+          },
+          { eventID: uniqueEventId },
+        ); // Passed as the 4th parameter matching configuration
+      }
+
       // Sending the complete unified payload to your Next.js API Route
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          eventId: uniqueEventId,
+        }),
       });
 
       if (response.ok) {

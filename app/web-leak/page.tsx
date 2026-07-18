@@ -66,13 +66,30 @@ export default function EngineeringLandingPage() {
       ...formData,
       submittedAt: new Date().toISOString(),
     };
+    // Generate a completely unique identifier for this specific action
+    const uniqueEventId = `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     try {
+      // Fire Browser Pixel instantly with the event ID (Deduplication Layer)
+      if (typeof window !== "undefined" && window.fbq) {
+        window.fbq(
+          "track",
+          "Lead",
+          {
+            content_name: formData.companyName,
+            value: formData.leadWhatsApp,
+          },
+          { eventID: uniqueEventId },
+        ); // Passed as the 4th parameter matching configuration
+      }
       // Example endpoint call to your Next.js Server Action or API Route
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(finalizedPayload),
+        body: JSON.stringify({
+          ...finalizedPayload,
+          eventId: uniqueEventId,
+        }),
       });
 
       if (response.ok) {
@@ -83,7 +100,9 @@ export default function EngineeringLandingPage() {
     } catch (error) {
       console.error(error);
       // Fallback fallback visual confirmation if API route isn't ready yet
-      alert(`Demo Mode: Data package compiled perfectly!\n\n${JSON.stringify(finalizedPayload, null, 2)}`);
+      alert(
+        `Demo Mode: Data package compiled perfectly!\n\n${JSON.stringify(finalizedPayload, null, 2)}`,
+      );
       setCurrentStep(5);
     } finally {
       setIsSubmitting(false);
@@ -92,14 +111,16 @@ export default function EngineeringLandingPage() {
 
   return (
     <div className="min-h-screen bg-[#060b1a] text-white font-sans antialiased selection:bg-[#e2b233] selection:text-black">
-      
       {/* NAVIGATION BAR */}
       <header className="flex justify-between items-center p-5 max-w-3xl mx-auto border-b border-white/5">
         <div className="text-xl font-extrabold tracking-wider text-white">
-          SYSTEM<span className="text-xs font-normal tracking-[2px] text-[#e2b233] ml-1">ENGINEERING</span>
+          SYSTEM
+          <span className="text-xs font-normal tracking-[2px] text-[#e2b233] ml-1">
+            ENGINEERING
+          </span>
         </div>
-        <a 
-          href="#diagnostic-app" 
+        <a
+          href="#diagnostic-app"
           className="border border-[#e2b233] text-[#e2b233] px-4 py-2 rounded-md text-xs font-bold transition-all duration-200 hover:bg-[#e2b233] hover:text-[#060b1a]"
         >
           Free Website Check
@@ -107,7 +128,6 @@ export default function EngineeringLandingPage() {
       </header>
 
       <main className="max-w-2xl mx-auto px-5 py-10">
-        
         {/* HERO SEGMENT */}
         <section className="mb-10 text-left">
           <div className="inline-flex items-center gap-1.5 bg-[#e8402b]/10 text-[#e8402b] text-xs font-bold px-3 py-1.5 rounded border border-[#e8402b]/20 tracking-wider mb-5">
@@ -118,12 +138,13 @@ export default function EngineeringLandingPage() {
             Why fast-growing businesses upgrade their websites today.
           </h1>
           <p className="text-[17px] text-[#94a3b8] font-normal leading-relaxed">
-            A slow website is like a locked door. If it takes too long to load, your customers leave instantly.
+            A slow website is like a locked door. If it takes too long to load,
+            your customers leave instantly.
           </p>
         </section>
 
         {/* VISUAL PHONE DEMO */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -141,12 +162,14 @@ export default function EngineeringLandingPage() {
                 <span>Just now</span>
               </div>
               <div className="text-xs md:text-sm text-gray-700 font-medium leading-normal">
-                {"Your website won't open. It keeps loading. Please fix it now."}
+                {
+                  "Your website won't open. It keeps loading. Please fix it now."
+                }
               </div>
             </div>
           </div>
 
-          <motion.div 
+          <motion.div
             initial={{ rotate: 0, scale: 0.9 }}
             animate={{ rotate: 3, scale: 1 }}
             transition={{ delay: 0.4, type: "spring" }}
@@ -157,39 +180,83 @@ export default function EngineeringLandingPage() {
         </motion.div>
 
         <div className="text-center my-12">
-          <a href="#diagnostic-app" className="inline-block bg-[#e2b233] text-black px-8 py-4 text-base font-bold rounded-lg shadow-lg shadow-[#e2b233]/10 transition-transform duration-200 hover:scale-[1.02]">
+          <a
+            href="#diagnostic-app"
+            className="inline-block bg-[#e2b233] text-black px-8 py-4 text-base font-bold rounded-lg shadow-lg shadow-[#e2b233]/10 transition-transform duration-200 hover:scale-[1.02]"
+          >
             Check Your Website Now
           </a>
         </div>
 
         {/* LAYMAN LEVEL STORY CONTEXT */}
         <section className="space-y-4 mb-14 text-slate-200">
-          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-4">Cheap setups break when real buyers visit.</h2>
-          <p>Many business websites use cheap setups. They look fine at first glance. But they break completely when real people use them on slow phone networks.</p>
-          <p>What happens when 100 parents try to check school scores at the exact same time? Or when 500 people try to pay you at once during a rush?</p>
-          <p>A weak website will slow down and crash. It shows a blank error screen. <strong className="text-[#e2b233] font-semibold">Your buyers get tired of waiting. They do not wait for it to load. They just leave.</strong></p>
-          <p>We build fast pages and clean code that never crash. Your business is growing, and your tools should grow with you.</p>
+          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-4">
+            Cheap setups break when real buyers visit.
+          </h2>
+          <p>
+            Many business websites use cheap setups. They look fine at first
+            glance. But they break completely when real people use them on slow
+            phone networks.
+          </p>
+          <p>
+            What happens when 100 parents try to check school scores at the
+            exact same time? Or when 500 people try to pay you at once during a
+            rush?
+          </p>
+          <p>
+            A weak website will slow down and crash. It shows a blank error
+            screen.{" "}
+            <strong className="text-[#e2b233] font-semibold">
+              Your buyers get tired of waiting. They do not wait for it to load.
+              They just leave.
+            </strong>
+          </p>
+          <p>
+            We build fast pages and clean code that never crash. Your business
+            is growing, and your tools should grow with you.
+          </p>
         </section>
 
         <hr className="border-t border-white/10 my-10" />
 
         {/* PROBLEM DEEP DIVE */}
         <section className="mb-14">
-          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-4">Why a slow page costs you money every day.</h2>
-          <p className="text-slate-200 mb-6">In Nigeria, mobile data can be slow. If your page takes more than five seconds to open, your visitor is gone forever. You lose a client and you never even know it.</p>
-          
+          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-4">
+            Why a slow page costs you money every day.
+          </h2>
+          <p className="text-slate-200 mb-6">
+            In Nigeria, mobile data can be slow. If your page takes more than
+            five seconds to open, your visitor is gone forever. You lose a
+            client and you never even know it.
+          </p>
+
           <div className="flex flex-col gap-4">
             <div className="bg-[#0f172a] border border-white/5 p-5 rounded-xl">
-              <h3 className="text-base font-bold text-[#e2b233] mb-1.5">Network Drops</h3>
-              <p className="text-sm text-[#94a3b8]">Heavy pages fail completely on normal mobile networks. They need clean code to stay fast.</p>
+              <h3 className="text-base font-bold text-[#e2b233] mb-1.5">
+                Network Drops
+              </h3>
+              <p className="text-sm text-[#94a3b8]">
+                Heavy pages fail completely on normal mobile networks. They need
+                clean code to stay fast.
+              </p>
             </div>
             <div className="bg-[#0f172a] border border-white/5 p-5 rounded-xl">
-              <h3 className="text-base font-bold text-[#e2b233] mb-1.5">Traffic Crashes</h3>
-              <p className="text-sm text-[#94a3b8]">Cheap servers shut down when many people click your link together. This locks out your buyers.</p>
+              <h3 className="text-base font-bold text-[#e2b233] mb-1.5">
+                Traffic Crashes
+              </h3>
+              <p className="text-sm text-[#94a3b8]">
+                Cheap servers shut down when many people click your link
+                together. This locks out your buyers.
+              </p>
             </div>
             <div className="bg-[#0f172a] border border-white/5 p-5 rounded-xl">
-              <h3 className="text-base font-bold text-[#e2b233] mb-1.5">Lost Revenue</h3>
-              <p className="text-sm text-[#94a3b8]">If a customer cannot load your payment or booking link fast, they buy from a competitor.</p>
+              <h3 className="text-base font-bold text-[#e2b233] mb-1.5">
+                Lost Revenue
+              </h3>
+              <p className="text-sm text-[#94a3b8]">
+                If a customer cannot load your payment or booking link fast,
+                they buy from a competitor.
+              </p>
             </div>
           </div>
         </section>
@@ -198,13 +265,26 @@ export default function EngineeringLandingPage() {
 
         {/* SOLUTION MATRIX */}
         <section className="mb-14">
-          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-4">Fast pages that stay online 24/7.</h2>
-          <p className="text-slate-200 mb-6">We write light, fast code. Your page will open instantly, handle massive rushes of visitors smoothly, and save you valuable time.</p>
+          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-4">
+            Fast pages that stay online 24/7.
+          </h2>
+          <p className="text-slate-200 mb-6">
+            We write light, fast code. Your page will open instantly, handle
+            massive rushes of visitors smoothly, and save you valuable time.
+          </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="bg-white/5 border border-white/5 p-3 rounded-lg text-sm font-medium">✓ Opens on slow networks</div>
-            <div className="bg-white/5 border border-white/5 p-3 rounded-lg text-sm font-medium">✓ Stays online during rushes</div>
-            <div className="bg-white/5 border border-white/5 p-3 rounded-lg text-sm font-medium">✓ Simple mobile view</div>
-            <div className="bg-white/5 border border-white/5 p-3 rounded-lg text-sm font-medium">✓ Automatic customer tools</div>
+            <div className="bg-white/5 border border-white/5 p-3 rounded-lg text-sm font-medium">
+              ✓ Opens on slow networks
+            </div>
+            <div className="bg-white/5 border border-white/5 p-3 rounded-lg text-sm font-medium">
+              ✓ Stays online during rushes
+            </div>
+            <div className="bg-white/5 border border-white/5 p-3 rounded-lg text-sm font-medium">
+              ✓ Simple mobile view
+            </div>
+            <div className="bg-white/5 border border-white/5 p-3 rounded-lg text-sm font-medium">
+              ✓ Automatic customer tools
+            </div>
           </div>
         </section>
 
@@ -213,12 +293,15 @@ export default function EngineeringLandingPage() {
         {/* DIAGNOSTIC FLOW APPLICATION ENGINE */}
         <section id="diagnostic-app" className="scroll-mt-10 mb-14">
           <div className="bg-[#0f172a] border border-[#d4af37]/30 rounded-2xl p-6 md:p-8 shadow-xl">
-            <h2 className="text-xl md:text-2xl font-extrabold text-[#e2b233] mb-1.5">Get a Free Website Check</h2>
-            <p className="text-sm text-[#94a3b8] mb-6">Answer 3 questions to check your setup speed and stability.</p>
+            <h2 className="text-xl md:text-2xl font-extrabold text-[#e2b233] mb-1.5">
+              Get a Free Website Check
+            </h2>
+            <p className="text-sm text-[#94a3b8] mb-6">
+              Answer 3 questions to check your setup speed and stability.
+            </p>
 
             <form onSubmit={handleSubmit}>
               <AnimatePresence mode="wait">
-                
                 {/* STEP 1: Name Gathering */}
                 {currentStep === 1 && (
                   <motion.div
@@ -228,16 +311,27 @@ export default function EngineeringLandingPage() {
                     exit={{ opacity: 0, x: -10 }}
                     className="space-y-4"
                   >
-                    <label className="block text-base font-semibold text-white">What is your company or group name?</label>
+                    <label className="block text-base font-semibold text-white">
+                      What is your company or group name?
+                    </label>
                     <input
                       type="text"
                       value={formData.companyName}
-                      onChange={(e) => setFormData(prev => ({ ...prev, companyName: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          companyName: e.target.value,
+                        }))
+                      }
                       className="w-full bg-black/20 border border-white/15 rounded-lg p-3.5 text-white text-base outline-none focus:border-[#e2b233]"
                       placeholder="e.g., Apex Business Ltd"
                       autoComplete="off"
                     />
-                    <button type="button" onClick={handleNextStep2} className="w-full bg-[#e2b233] text-black p-4 text-base font-bold rounded-lg cursor-pointer transition-colors hover:bg-[#e2b233]/90">
+                    <button
+                      type="button"
+                      onClick={handleNextStep2}
+                      className="w-full bg-[#e2b233] text-black p-4 text-base font-bold rounded-lg cursor-pointer transition-colors hover:bg-[#e2b233]/90"
+                    >
                       Next Step
                     </button>
                   </motion.div>
@@ -252,10 +346,17 @@ export default function EngineeringLandingPage() {
                     exit={{ opacity: 0, x: -10 }}
                     className="space-y-4"
                   >
-                    <label className="block text-base font-semibold text-white">What kind of group is this?</label>
+                    <label className="block text-base font-semibold text-white">
+                      What kind of group is this?
+                    </label>
                     <select
                       value={formData.groupType}
-                      onChange={(e) => setFormData(prev => ({ ...prev, groupType: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          groupType: e.target.value,
+                        }))
+                      }
                       className="w-full bg-[#0f172a] border border-white/15 rounded-lg p-3.5 text-white text-base outline-none focus:border-[#e2b233] appearance-none"
                     >
                       <option value="corporate">Company / Business</option>
@@ -264,7 +365,11 @@ export default function EngineeringLandingPage() {
                       <option value="church">Church / Mosque</option>
                       <option value="ngo">NGO / Charity</option>
                     </select>
-                    <button type="button" onClick={() => setCurrentStep(3)} className="w-full bg-[#e2b233] text-black p-4 text-base font-bold rounded-lg cursor-pointer transition-colors hover:bg-[#e2b233]/90">
+                    <button
+                      type="button"
+                      onClick={() => setCurrentStep(3)}
+                      className="w-full bg-[#e2b233] text-black p-4 text-base font-bold rounded-lg cursor-pointer transition-colors hover:bg-[#e2b233]/90"
+                    >
                       Next Step
                     </button>
                   </motion.div>
@@ -279,20 +384,35 @@ export default function EngineeringLandingPage() {
                     exit={{ opacity: 0, x: -10 }}
                     className="space-y-4"
                   >
-                    <label className="block text-base font-semibold text-white">Do you have a website link right now?</label>
+                    <label className="block text-base font-semibold text-white">
+                      Do you have a website link right now?
+                    </label>
                     <input
                       type="text"
                       value={formData.websiteUrl}
-                      onChange={(e) => setFormData(prev => ({ ...prev, websiteUrl: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          websiteUrl: e.target.value,
+                        }))
+                      }
                       className="w-full bg-black/20 border border-white/15 rounded-lg p-3.5 text-white text-base outline-none focus:border-[#e2b233]"
                       placeholder="e.g., www.mycompany.com (Leave blank if none)"
                       autoComplete="off"
                     />
                     <div className="flex gap-3">
-                      <button type="button" onClick={() => handleWebsiteStatus(true)} className="flex-1 bg-white/5 border border-white/15 text-white p-3.5 text-base font-semibold rounded-lg cursor-pointer hover:bg-white/10 transition-colors">
+                      <button
+                        type="button"
+                        onClick={() => handleWebsiteStatus(true)}
+                        className="flex-1 bg-white/5 border border-white/15 text-white p-3.5 text-base font-semibold rounded-lg cursor-pointer hover:bg-white/10 transition-colors"
+                      >
                         Submit Link
                       </button>
-                      <button type="button" onClick={() => handleWebsiteStatus(false)} className="flex-1 bg-white/5 border border-white/15 text-white p-3.5 text-base font-semibold rounded-lg cursor-pointer hover:bg-white/10 transition-colors">
+                      <button
+                        type="button"
+                        onClick={() => handleWebsiteStatus(false)}
+                        className="flex-1 bg-white/5 border border-white/15 text-white p-3.5 text-base font-semibold rounded-lg cursor-pointer hover:bg-white/10 transition-colors"
+                      >
                         {"I Don't Have One"}
                       </button>
                     </div>
@@ -311,9 +431,11 @@ export default function EngineeringLandingPage() {
                     <div className="bg-[#e8402b]/10 border border-dashed border-[#e8402b] rounded-lg p-4 text-sm text-red-200">
                       <p>{formData.evaluationMessage}</p>
                     </div>
-                    
+
                     <p className="text-sm text-[#94a3b8]">
-                      Our team will get back to you. Enter your details below. We will contact you and send the full speed report straight to your WhatsApp.
+                      Our team will get back to you. Enter your details below.
+                      We will contact you and send the full speed report
+                      straight to your WhatsApp.
                     </p>
 
                     <div className="space-y-3">
@@ -321,7 +443,12 @@ export default function EngineeringLandingPage() {
                         type="text"
                         required
                         value={formData.leadName}
-                        onChange={(e) => setFormData(prev => ({ ...prev, leadName: e.target.value }))}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            leadName: e.target.value,
+                          }))
+                        }
                         className="w-full bg-black/20 border border-white/15 rounded-lg p-3.5 text-white text-base outline-none focus:border-[#e2b233]"
                         placeholder="Your Name"
                       />
@@ -329,18 +456,25 @@ export default function EngineeringLandingPage() {
                         type="tel"
                         required
                         value={formData.leadWhatsApp}
-                        onChange={(e) => setFormData(prev => ({ ...prev, leadWhatsApp: e.target.value }))}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            leadWhatsApp: e.target.value,
+                          }))
+                        }
                         className="w-full bg-black/20 border border-white/15 rounded-lg p-3.5 text-white text-base outline-none focus:border-[#e2b233]"
                         placeholder="WhatsApp Number"
                       />
                     </div>
 
-                    <button 
-                      type="submit" 
+                    <button
+                      type="submit"
                       disabled={isSubmitting}
                       className="w-full bg-[#e2b233] disabled:bg-[#e2b233]/50 text-black p-4 text-base font-bold rounded-lg cursor-pointer transition-colors hover:bg-[#e2b233]/90 flex items-center justify-center gap-2"
                     >
-                      {isSubmitting ? "Processing Code Report..." : "Check My Website Now"}
+                      {isSubmitting
+                        ? "Processing Code Report..."
+                        : "Check My Website Now"}
                     </button>
                   </motion.div>
                 )}
@@ -353,14 +487,26 @@ export default function EngineeringLandingPage() {
                     animate={{ opacity: 1, scale: 1 }}
                     className="text-center py-6 space-y-3"
                   >
-                    <div className="w-12 h-12 bg-[#2ecc71]/20 text-[#2ecc71] rounded-full flex items-center justify-content-center mx-auto text-xl font-bold">✓</div>
-                    <h3 className="text-lg font-bold text-white">Thank you, {formData.leadName}!</h3>
+                    <div className="w-12 h-12 bg-[#2ecc71]/20 text-[#2ecc71] rounded-full flex items-center justify-content-center mx-auto text-xl font-bold">
+                      ✓
+                    </div>
+                    <h3 className="text-lg font-bold text-white">
+                      Thank you, {formData.leadName}!
+                    </h3>
                     <p className="text-sm text-[#94a3b8] max-w-sm mx-auto">
-                      Your analysis request for <span className="text-[#e2b233] font-semibold">{formData.companyName}</span> has been securely logged. Our engineering team will process it and forward it directly to <span className="text-white font-medium">{formData.leadWhatsApp}</span> on whatsapp.
+                      Your analysis request for{" "}
+                      <span className="text-[#e2b233] font-semibold">
+                        {formData.companyName}
+                      </span>{" "}
+                      has been securely logged. Our engineering team will
+                      process it and forward it directly to{" "}
+                      <span className="text-white font-medium">
+                        {formData.leadWhatsApp}
+                      </span>{" "}
+                      on whatsapp.
                     </p>
                   </motion.div>
                 )}
-
               </AnimatePresence>
             </form>
           </div>
@@ -370,46 +516,76 @@ export default function EngineeringLandingPage() {
         <section className="mb-14">
           <div className="bg-white/2 border-l-4 border-[#e2b233] p-5 rounded-r-lg">
             <p className="italic text-sm md:text-base text-slate-200 mb-2">
-              {"Our old registration portal used to crash every semester when parents logged in. This new fast system has never gone offline once."}
+              {
+                "Our old registration portal used to crash every semester when parents logged in. This new fast system has never gone offline once."
+              }
             </p>
-            <span className="text-xs text-[#94a3b8] font-bold">— School Administrator</span>
+            <span className="text-xs text-[#94a3b8] font-bold">
+              — School Administrator
+            </span>
           </div>
         </section>
 
         {/* FAQS SEGMENT */}
         <section className="space-y-4 mb-14">
-          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-2">Questions?</h2>
+          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-2">
+            Questions?
+          </h2>
 
           <div className="bg-[#0f172a] p-4 rounded-lg">
-            <h3 className="text-sm md:text-base font-bold text-white mb-2">Why does a website crash when many people open it?</h3>
-            <p className="text-xs md:text-sm text-[#94a3b8]">Cheap servers have small limits. When too many people visit at once, the server runs out of memory and shuts down completely.</p>
+            <h3 className="text-sm md:text-base font-bold text-white mb-2">
+              Why does a website crash when many people open it?
+            </h3>
+            <p className="text-xs md:text-sm text-[#94a3b8]">
+              Cheap servers have small limits. When too many people visit at
+              once, the server runs out of memory and shuts down completely.
+            </p>
           </div>
 
           <div className="bg-[#0f172a] p-4 rounded-lg">
-            <h3 className="text-sm md:text-base font-bold text-white mb-2">What if my customers use weak networks like 3G?</h3>
-            <p className="text-xs md:text-sm text-[#94a3b8]">We design lightweight pages. They trim away heavy, useless data so your page opens fast even on a poor network signal.</p>
+            <h3 className="text-sm md:text-base font-bold text-white mb-2">
+              What if my customers use weak networks like 3G?
+            </h3>
+            <p className="text-xs md:text-sm text-[#94a3b8]">
+              We design lightweight pages. They trim away heavy, useless data so
+              your page opens fast even on a poor network signal.
+            </p>
           </div>
 
           <div className="bg-[#0f172a] p-4 rounded-lg">
-            <h3 className="text-sm md:text-base font-bold text-white mb-2">How long does the website check take?</h3>
-            <p className="text-xs md:text-sm text-[#94a3b8]">Our team runs the speed check immediately. You will get your complete results on WhatsApp within a few hours.</p>
+            <h3 className="text-sm md:text-base font-bold text-white mb-2">
+              How long does the website check take?
+            </h3>
+            <p className="text-xs md:text-sm text-[#94a3b8]">
+              Our team runs the speed check immediately. You will get your
+              complete results on WhatsApp within a few hours.
+            </p>
           </div>
         </section>
 
         {/* CLOSING CTA */}
         <section className="text-center mt-16 space-y-4">
-          <h2 className="text-xl md:text-2xl font-extrabold text-white">Stop losing customers to slow loading screens.</h2>
-          <p className="text-sm text-[#94a3b8]">Make sure your door is always open and fast.</p>
-          <a href="#diagnostic-app" className="inline-block bg-[#e2b233] text-black px-8 py-4 text-base font-bold rounded-lg shadow-lg shadow-[#e2b233]/10 transition-transform duration-200 hover:scale-[1.02]">
+          <h2 className="text-xl md:text-2xl font-extrabold text-white">
+            Stop losing customers to slow loading screens.
+          </h2>
+          <p className="text-sm text-[#94a3b8]">
+            Make sure your door is always open and fast.
+          </p>
+          <a
+            href="#diagnostic-app"
+            className="inline-block bg-[#e2b233] text-black px-8 py-4 text-base font-bold rounded-lg shadow-lg shadow-[#e2b233]/10 transition-transform duration-200 hover:scale-[1.02]"
+          >
             Start Your Free Speed Check
           </a>
         </section>
-
       </main>
 
       {/* FOOTER */}
       <footer className="text-center py-10 border-t border-white/5 text-xs text-[#94a3b8]">
-        <p>© 2026 Web Engineering Team. We build fast websites that help your business grow.</p>
+        <p>
+          © 2026 Web Engineering Team. We build fast websites that help your
+          business grow.
+        </p>
       </footer>
     </div>
   );
