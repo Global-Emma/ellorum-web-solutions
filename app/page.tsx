@@ -14,6 +14,7 @@ import {
 import { motion } from "framer-motion";
 import { previewServices } from "@/lib/utils";
 import { FaWhatsapp } from "react-icons/fa";
+import Navbar from "@/components/global/navbar";
 
 export default function HomePage() {
   const handleWhatsAppClick = () => {
@@ -26,8 +27,8 @@ export default function HomePage() {
   };
   return (
     <>
+      <Navbar />
       <HeroDynamic />
-
       <section className="py-24 relative overflow-hidden bg-brand-bg border-t border-white/5">
         {/* Background Lighting Nodes */}
         <div className="absolute bottom-0 right-10 w-96 h-96 bg-brand-neon/5 rounded-full blur-[100px] pointer-events-none" />
