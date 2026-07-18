@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import Image from "next/image";
+import Navbar from "@/components/global/navbar";
 
 export default function PortfolioHub() {
   const [activeFilter, setActiveFilter] = useState("ALL");
@@ -107,6 +108,8 @@ export default function PortfolioHub() {
       : projectIndex.filter((p) => p.category === activeFilter);
 
   return (
+    <>
+    <Navbar />
     <div className="pt-32 pb-20 relative overflow-hidden">
       <div className="container mx-auto px-6 max-w-6xl space-y-16">
         <div className="text-center space-y-4 max-w-2xl mx-auto">
@@ -194,5 +197,6 @@ export default function PortfolioHub() {
         </div>
       </div>
     </div>
+    </>
   );
 }

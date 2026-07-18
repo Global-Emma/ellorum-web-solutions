@@ -12,6 +12,7 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
+import Navbar from "@/components/global/navbar";
 
 interface FAQItem {
   question: string;
@@ -166,6 +167,8 @@ export default function FAQPage() {
   };
 
   return (
+    <>
+    <Navbar />
     <div className="pt-36 pb-24 relative overflow-hidden bg-brand-bg text-white min-h-screen">
       {/* Background Lighting Aura */}
       <div className="absolute top-20 right-1/4 w-150 h-150 bg-brand-electric/5 rounded-full blur-[140px] pointer-events-none" />
@@ -301,5 +304,6 @@ export default function FAQPage() {
         </motion.div>
       </div>
     </div>
+    </>
   );
 }

@@ -84,7 +84,7 @@ export default function EllorumDiagnosticPage() {
       {/* NAVIGATION BAR */}
       <header className="border-b border-white/5 bg-[#060b1a]/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-3xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="text-xl font-extrabold tracking-wider text-white">Ellorum</div>
+          <div className="text-xl font-extrabold tracking-wider text-white">SEARCH CHECK</div>
           <a
             href="#diagnostic-app"
             onClick={scrollToDiagnostic}
@@ -453,9 +453,9 @@ export default function EllorumDiagnosticPage() {
       </main>
 
       {/* FOOTER */}
-      <footer className="border-t border-white/5 py-8 text-center text-xs text-slate-500">
+      {/* <footer className="border-t border-white/5 py-8 text-center text-xs text-slate-500">
         <p>© Ellorum Web Solutions</p>
-      </footer>
+      </footer> */}
     </div>
   );
 }

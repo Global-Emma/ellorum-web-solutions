@@ -81,7 +81,7 @@ export default function TrustTestPage() {
     <div className="min-h-screen bg-[#060B1A] text-white font-sans antialiased selection:bg-[#E2B233] selection:text-black">
       {/* NAVIGATION BAR */}
       <header className="border-b border-white/5 max-w-4xl mx-auto px-6 py-5 flex justify-between items-center">
-        <div className="text-xl font-extrabold tracking-wider">Ellorum</div>
+        <div className="text-xl font-extrabold tracking-wider">TRUST CHECK</div>
         <a
           href="#audit"
           className="border border-[#E2B233] text-[#E2B233] px-4 py-2 rounded-md text-xs font-bold transition-all hover:bg-[#E2B233] hover:text-[#060B1A]"
@@ -406,9 +406,9 @@ export default function TrustTestPage() {
       </main>
 
       {/* FOOTER */}
-      <footer className="text-center py-10 border-t border-white/5 text-xs text-slate-500 mt-12">
+      {/* <footer className="text-center py-10 border-t border-white/5 text-xs text-slate-500 mt-12">
         <p>© Ellorum Web Solutions</p>
-      </footer>
+      </footer> */}
     </div>
   );
 }

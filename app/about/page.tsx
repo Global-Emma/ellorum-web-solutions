@@ -10,6 +10,7 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import Link from "next/link";
+import Navbar from "@/components/global/navbar";
 
 export default function AboutPage() {
   const values = [
@@ -63,6 +64,8 @@ export default function AboutPage() {
   };
 
   return (
+    <>
+    <Navbar />
     <div className="pt-36 pb-24 relative overflow-hidden bg-brand-bg text-white">
       {/* Background Lighting Node */}
       <div className="absolute top-10 left-1/4 w-125 h-125 bg-brand-electric/5 rounded-full blur-[120px] pointer-events-none animate-glow-pulse" />
@@ -255,5 +258,6 @@ export default function AboutPage() {
         </motion.div>
       </div>
     </div>
+    </>
   );
 }

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import SmoothScrollProvider from "@/components/global/smooth-scroll";
-import Navbar from "@/components/global/navbar";
 import Footer from "@/components/global/footer";
 import GlowCursor from "@/components/global/glow-cursor";
 import { Suspense } from "react";
@@ -31,7 +30,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-brand-bg text-white overflow-x-hidden">
         <SmoothScrollProvider>
           <GlowCursor />
-          <Navbar />
           <main className="min-h-screen relative z-10">
             {children}
           </main>

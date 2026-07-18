@@ -3,9 +3,12 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { previewServices as suite } from "@/lib/utils";
+import Navbar from "@/components/global/navbar";
 
 export default function ServicesCatalogPage() {
   return (
+    <>
+    <Navbar />
     <div className="pt-32 pb-20 relative overflow-hidden">
       <div className="container mx-auto px-6 max-w-6xl">
         <div className="text-center space-y-4 max-w-2xl mx-auto mb-20">
@@ -54,5 +57,6 @@ export default function ServicesCatalogPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

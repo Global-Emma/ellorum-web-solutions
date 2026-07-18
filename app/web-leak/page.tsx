@@ -356,7 +356,7 @@ export default function EngineeringLandingPage() {
                     <div className="w-12 h-12 bg-[#2ecc71]/20 text-[#2ecc71] rounded-full flex items-center justify-content-center mx-auto text-xl font-bold">✓</div>
                     <h3 className="text-lg font-bold text-white">Thank you, {formData.leadName}!</h3>
                     <p className="text-sm text-[#94a3b8] max-w-sm mx-auto">
-                      Your analysis request for <span className="text-[#e2b233] font-semibold">{formData.companyName}</span> has been securely logged. Our engineering team will process the speed report and forward it directly to <span className="text-white font-medium">{formData.leadWhatsApp}</span>.
+                      Your analysis request for <span className="text-[#e2b233] font-semibold">{formData.companyName}</span> has been securely logged. Our engineering team will process it and forward it directly to <span className="text-white font-medium">{formData.leadWhatsApp}</span> on whatsapp.
                     </p>
                   </motion.div>
                 )}

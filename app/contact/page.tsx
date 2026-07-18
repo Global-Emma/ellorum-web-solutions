@@ -15,6 +15,7 @@ import {
   FaWhatsappSquare,
 } from "react-icons/fa";
 import { previewServices } from "@/lib/utils";
+import Navbar from "@/components/global/navbar";
 
 export default function ContactPipeline() {
   const [formState, setFormState] = useState({
@@ -93,6 +94,8 @@ export default function ContactPipeline() {
   };
 
   return (
+    <>
+    <Navbar />
     <section className="py-32 relative overflow-hidden">
       <div className="container mx-auto px-6 relative z-10">
         <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
@@ -412,5 +415,6 @@ export default function ContactPipeline() {
         </div>
       </div>
     </section>
+    </>
   );
 }
