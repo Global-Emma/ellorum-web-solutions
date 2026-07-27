@@ -24,7 +24,7 @@ export default function PortfolioHub() {
       category: "WEB",
       title: "Startup Collaboration Platform",
       desc: "A platform that connects freelancers and companies, making it easy to discover opportunities, collaborate on projects, and build professional relationships.",
-      link: "https://freeemp.vercel.app",
+      link: "https://freemp.vercel.app",
       imageUrl: "/images/portfolio/startup_collab.png",
       tags: ["Fast Loading", "Responsive", "Google Indexed", "SEO Ready"],
     },

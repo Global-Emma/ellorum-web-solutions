@@ -44,14 +44,14 @@ export default function ServicesCatalogPage() {
                   </p>
                 </div>
               </div>
-              <div className="pt-8 mt-6 border-t border-white/5">
+              {/* <div className="pt-8 mt-6 border-t border-white/5">
                 <Link
                   href={`/services/${s.id}`}
                   className="inline-flex items-center gap-2 text-xs font-bold text-white tracking-wider uppercase group-hover:text-brand-electric transition-colors"
                 >
                   Review System Scope <ArrowRight className="w-4 h-4" />
                 </Link>
-              </div>
+              </div> */}
             </div>
           ))}
         </div>
