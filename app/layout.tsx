@@ -6,6 +6,8 @@ import GlowCursor from "@/components/global/glow-cursor";
 import { Suspense } from "react";
 import MetaPixel from "@/components/analytics/meta-pixel";
 import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
+import FormillaChat from "@/components/Formilla";
+
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://ellorumwebsolutions.vercel.app";
 
@@ -211,6 +213,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <GlowCursor />
           <main className="min-h-screen relative z-10 flex-grow">
             {children}
+
+           <FormillaChat />
           </main>
           <Footer />
         </SmoothScrollProvider>
