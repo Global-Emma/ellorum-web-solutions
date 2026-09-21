@@ -205,6 +205,33 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+    <script type="text/javascript">
+        (function () {
+            var head = document.getElementsByTagName("head").item(0);
+            var script = document.createElement("script");
+
+            var src = (document.location.protocol == 'https:'
+                ? 'https://www.formilla.com/scripts/feedback.js'
+                : 'http://www.formilla.com/scripts/feedback.js');
+
+            script.setAttribute("type", "text/javascript");
+            script.setAttribute("src", src); script.setAttribute("async", true);
+
+            var complete = false;
+
+            script.onload = script.onreadystatechange = function () {
+                if (!complete && (!this.readyState
+                    || this.readyState == 'loaded'
+                    || this.readyState == 'complete')) {
+                    complete = true;
+                    Formilla.guid = 'cs7b4c31-696a-45e2-a8e3-eaa253db753c';
+                    Formilla.loadWidgets();
+                }
+            };
+
+            head.appendChild(script);
+        })();
+    </script>
       </head>
       <body className="bg-brand-bg text-white overflow-x-hidden min-h-screen flex flex-col">
         <SmoothScrollProvider>
