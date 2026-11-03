@@ -231,7 +231,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Suspense fallback={null}>
           <MetaPixel />
           <BotpressChat />
-          <FormillaChat />
+         {/* <FormillaChat /> */}
         </Suspense>
 
         {gaId && <GoogleAnalytics gaId={gaId} />}
