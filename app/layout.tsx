@@ -9,10 +9,9 @@ import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
 import FormillaChat from "@/components/Formilla";
 import BotpressChat from "@/components/BotpressChat";
 
-
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://ellorumwebsolutions.vercel.app";
 
-// 1. Viewport & Theme Configuration (Next.js 14/15 standard)
+// 1. Viewport & Theme Configuration
 export const viewport: Viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: dark)", color: "#0a0a0c" },
@@ -110,7 +109,7 @@ export const metadata: Metadata = {
   },
 };
 
-// 3. Schema.org JSON-LD Structured Data for Google Rich Results & Knowledge Graph
+// 3. Schema.org JSON-LD Structured Data
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
@@ -201,28 +200,38 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const gtmId = process.env.NEXT_PUBLIC_GTM_ID || "GTM-WNB5FCJM";
 
   return (
-    <html lang="en" className="antialiased scroll-smooth">
+    <html lang="en" className="antialiased scroll-smooth" suppressHydrationWarning>
       <head>
-        {/* Inject JSON-LD Schema directly into <head> for crawler instant-discovery */}
+        {/* Network Preconnect Hints for Critical Third-Party Scripts */}
+        <link rel="preconnect" href="https://connect.facebook.net" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://www.googletagmanager.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://cdn.botpress.cloud" />
+        <link rel="dns-prefetch" href="https://www.formilla.com" />
+
+        {/* Security Meta Directives for Best Practices Audits */}
+        <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+        {/* JSON-LD Schema */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="bg-brand-bg text-white overflow-x-hidden min-h-screen flex flex-col">
+      <body className="bg-brand-bg text-white overflow-x-hidden min-h-screen flex flex-col" suppressHydrationWarning>
         <SmoothScrollProvider>
           <GlowCursor />
           <main className="min-h-screen relative z-10 flex-grow">
             {children}
-           <BotpressChat />
-           <FormillaChat />
           </main>
           <Footer />
         </SmoothScrollProvider>
 
-        {/* Analytics Infrastructure (Deferred for Performance) */}
+        {/* Deferred Third-Party Integrations */}
         <Suspense fallback={null}>
           <MetaPixel />
+          <BotpressChat />
+          <FormillaChat />
         </Suspense>
 
         {gaId && <GoogleAnalytics gaId={gaId} />}
